@@ -80,6 +80,10 @@ run_share: $(SHARE_EXE)
 	@export LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(SHARE_LIB_DIR); \
 		./$<
 
+py: sdk_share
+	@echo =====run ctypes=====
+	@python ./py/main.py
+
 
 $(STATIC_OBJ_DIR)/%.c.o: %.c
 	@mkdir -p $(dir $@)
@@ -90,7 +94,7 @@ $(SHARE_OBJ_DIR)/%.c.o: %.c
 	gcc -shared -fPIC -Wl,-Bsymbolic -o $@ $<
 
 
-.PHONY: auto clean clean_all sdk sdk_h sdk_static sdk_share app run run_share run_static
+.PHONY: auto clean clean_all sdk sdk_h sdk_static sdk_share app run run_share run_static py
 
 sdk: sdk_h
 ifeq ($(SHARE),1)
