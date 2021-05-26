@@ -41,4 +41,23 @@ print("ans of hello_ans_type: ", ans)
 ##
 # 
 # 结构体使用
+# int hello_struct(struct hello_t* h)
+#  struct hello_t {
+#      const char* name;
+#      int age;
+#  };
+# 可通过class来定义结构体
+class hello_t(ctypes.Structure):
+    _fields_=[
+        ('name', ctypes.c_char_p),
+        ('age', ctypes.c_int),
+    ]
+h = hello_t(b"Kate", 11)
+print("h.name: ", h.name)
+print("h.age: ", h.age)
+h_point = ctypes.pointer(h)
+ans = lib.hello_struct(h_point)
+print("ans of hello_struct: ", ans)
+ans = lib.hello_struct(None)
+print("ans of hello_struct: ", ans)
 

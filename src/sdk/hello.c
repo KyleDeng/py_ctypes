@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "hello.h"
 
 int hello(const char* name, int num)
 {
@@ -36,6 +37,19 @@ const char* hello_ans_type(float f, char* str)
     printf("str=%s\n", str);
 
     return "ans_type";
+}
+
+int hello_struct(struct hello_t* h)
+{
+    if(NULL == h) {
+        printf("error param!\n");
+        return -1;
+    }
+
+    printf("name is %s\n", h->name);
+    printf("age is %d\n", h->age);
+
+    return 0;
 }
 
 

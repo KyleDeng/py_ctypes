@@ -32,6 +32,7 @@ SHARE_LIB = $(SHARE_LIB_DIR)/libsdk.so
 all: app
 
 debug:
+	@echo =====debug=====
 
 
 sdk_h:
@@ -43,6 +44,14 @@ sdk_h:
 	@echo -----build done: $(LIB_INC_DIR)-----
 
 
+$(STATIC_OBJ_DIR)/%.c.o: %.c
+	@mkdir -p $(dir $@)
+	gcc -c $< -o $@
+
+$(SHARE_OBJ_DIR)/%.c.o: %.c
+	@mkdir -p $(dir $@)
+	gcc -shared -fPIC -Wl,-Bsymbolic -o $@ $<
+
 sdk_static: $(STATIC_OBJ_FILES)
 	@rm -rf $(STATIC_LIB_DIR)
 	@mkdir -p $(dir $(STATIC_LIB))
@@ -50,7 +59,6 @@ sdk_static: $(STATIC_OBJ_FILES)
 	@_objs=`find $(STATIC_OBJ_DIR) -name *.c.o`; \
 		ar -rcs $(STATIC_LIB) $$_objs
 	@echo -----build done: $(STATIC_LIB)-----
-
 
 sdk_share: $(SHARE_OBJ_FILES)
 	@rm -rf $(SHARE_LIB_DIR)
@@ -60,7 +68,6 @@ sdk_share: $(SHARE_OBJ_FILES)
 		gcc -shared -fPIC -Wl,-Bsymbolic -o $(SHARE_LIB) $$_objs; \
 		cp $$_objs $(SHARE_LIB)
 	@echo -----build done: $(SHARE_LIB)-----
-
 
 
 $(SHARE_EXE): $(APP_SRC_FILES)
@@ -80,21 +87,20 @@ run_share: $(SHARE_EXE)
 	@export LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(SHARE_LIB_DIR); \
 		./$<
 
+
 py: sdk_share
 	@echo =====run ctypes=====
 	@python ./py/main.py
 
-
-$(STATIC_OBJ_DIR)/%.c.o: %.c
-	@mkdir -p $(dir $@)
-	gcc -c $< -o $@
-
-$(SHARE_OBJ_DIR)/%.c.o: %.c
-	@mkdir -p $(dir $@)
-	gcc -shared -fPIC -Wl,-Bsymbolic -o $@ $<
+help:
+	@echo "make clean"
+	@echo "make sdk(lib)"
+	@echo "make app(bin)"
+	@echo "make run"
+	@echo "make py(ctypes)"
 
 
-.PHONY: auto clean clean_all sdk sdk_h sdk_static sdk_share app run run_share run_static py
+.PHONY: auto clean clean_all sdk sdk_h sdk_static sdk_share app run run_share run_static py help
 
 sdk: sdk_h
 ifeq ($(SHARE),1)
@@ -128,3 +134,5 @@ clean:
 
 clean_all:
 	rm -rf $(OUTPUT)
+	# rm *.log
+
